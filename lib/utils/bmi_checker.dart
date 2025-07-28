@@ -1,4 +1,4 @@
-bmiChecker(double berat, double tinggi, String gender) {
+  bmiChecker(double berat, double tinggi, String gender) {
   double imt = berat / ((tinggi / 100) * (tinggi / 100));
   String keterangan;
 

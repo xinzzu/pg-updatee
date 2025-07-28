@@ -11,26 +11,29 @@ import 'package:pgcard/providers/patient_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pgcard/utils/app_style.dart';
 import 'package:pgcard/providers/doctor_provider.dart';
-import 'package:pgcard/services/auth_service.dart'; // Pastikan ini sudah diimpor
+import 'package:pgcard/services/auth_service.dart';
+import 'package:pgcard/providers/medical_record_provider.dart';
 
 void main() async {
-  // PERUBAHAN DI SINI: Inisialisasi binding dan periksa token
   WidgetsFlutterBinding.ensureInitialized();
-  String? token = await AuthService()
-      .getAuthToken(); // Asumsi AuthService memiliki metode getAuthToken()
+
+  // PERUBAHAN DI SINI: Validasi token sebelum menentukan initialRoute
+  AuthService authService = AuthService();
+  bool isAuthenticated =
+      await authService.validateToken(); // Coba validasi token
+
   String initialRoute;
-  if (token != null) {
-    initialRoute = '/home'; // Jika token ada, langsung ke homepage
+  if (isAuthenticated) {
+    initialRoute = '/home'; // Jika token valid, langsung ke homepage
   } else {
-    initialRoute = '/onboarding'; // Jika tidak, ke onboarding
+    initialRoute = '/onboarding'; // Jika token tidak valid, ke onboarding/login
   }
   runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
-  final String initialRoute; // Tambahkan properti initialRoute
+  final String initialRoute;
 
-  // PERUBAHAN DI SINI: Konstruktor baru untuk menerima initialRoute
   const MyApp({super.key, required this.initialRoute});
 
   @override
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => PatientProvider()),
         ChangeNotifierProvider(create: (_) => DoctorProvider()),
+        ChangeNotifierProvider(create: (_) => MedicalRecordProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -50,11 +54,12 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        initialRoute: initialRoute, // Gunakan initialRoute yang ditentukan
+        initialRoute: initialRoute,
         routes: {
           '/login': (context) => const LoginScreen(),
           '/home': (context) => const MainScreen(),
           '/onboarding': (context) => Onboarding(),
+          '/patient_card': (context) => const PatientCardScreen(),
         },
       ),
     );

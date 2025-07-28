@@ -14,10 +14,12 @@ class Patient {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? birthPlace;
-  final int height;
-  final double weight;
-  final String bmi;
-
+  final String diabetesDiagnosedSince;
+  // final int height;
+  // final double weight;
+  // final String bmi;
+  // // ignore: non_constant_identifier_names
+  // final String GENIRS1;
   Patient({
     required this.patientId,
     required this.medicalRecordNumber,
@@ -34,9 +36,11 @@ class Patient {
     required this.createdAt,
     required this.updatedAt,
     required this.birthPlace,
-    required this.height,
-    required this.weight,
-    required this.bmi,
+    required this.diabetesDiagnosedSince,
+    // required this.height,
+    // required this.weight,
+    // required this.bmi,
+    // required this.GENIRS1,
   });
 
   // Factory untuk mengubah JSON menjadi instance Patient
@@ -57,15 +61,17 @@ class Patient {
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
       birthPlace: json['birth_place'] ?? '-',
-      // Mengatasi kemungkinan 'height' berbentuk String atau null
-      height: json['height'] is String
-          ? int.parse(json['height'])
-          : (json['height'] ?? 0),
-      // Mengatasi kemungkinan 'weight' berbentuk String atau null
-      weight: json['weight'] is String
-          ? double.parse(json['weight'])
-          : (json['weight'] ?? 0.0),
-      bmi: json['bmi'] ?? '-',
+      diabetesDiagnosedSince: json['diabetes_diagnosed_since'] ?? '-',
+      // // Mengatasi kemungkinan 'height' berbentuk String atau null
+      // height: json['height'] is String
+      //     ? int.parse(json['height'])
+      //     : (json['height'] ?? 170),
+      // // Mengatasi kemungkinan 'weight' berbentuk String atau null
+      // weight: json['weight'] is String
+      //     ? double.parse(json['weight'])
+      //     : (json['weight'] ?? 80),
+      // bmi: json['bmi'] ?? '27.68',
+      // GENIRS1: json['GENIRS1'] ?? 'CC',
     );
   }
 

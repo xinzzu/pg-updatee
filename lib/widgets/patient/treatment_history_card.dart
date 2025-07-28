@@ -1,31 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:pgcard/models/patients/patient_model.dart';
+import 'package:pgcard/models/medical_record/medical_record_model.dart'; // Import MedicalRecord model
 
 class TreatmentHistory extends StatelessWidget {
-  const TreatmentHistory({Key? key, required Patient patient}) : super(key: key);
+  final MedicalRecord medicalRecord; // Tambahkan properti medicalRecord
+
+  // Modifikasi konstruktor untuk menerima objek MedicalRecord
+  const TreatmentHistory({Key? key, required this.medicalRecord})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        Text(
-          'Riwayat Pengobatan DMT2',
+      children: [
+        const Text(
+          'Obat Yang Dikonsumsi', // Label baru
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
             color: Color(0xFF101010),
             fontFamily: 'Inter',
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
-          'Metformin, Sulfonilurea, Pioglitazone, Gliptin',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          // Menampilkan drugs_consumed dari MedicalRecord
+          medicalRecord.drugsConsumed.isNotEmpty
+              ? medicalRecord.drugsConsumed.join(', ')
+              : 'Tidak ada obat yang dikonsumsi',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
             color: Color(0xFF646464),
             fontFamily: 'Inter',
           ),
+          textAlign: TextAlign.center, // Tambahkan ini jika teks bisa panjang
         ),
       ],
     );

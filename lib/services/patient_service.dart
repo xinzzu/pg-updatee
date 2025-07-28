@@ -18,7 +18,7 @@ class PatientService {
       }
 
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/patient', // Ganti URL dengan endpoint pasien
+        'http://10.0.2.2:8000/api/patient', // Ganti URL dengan endpoint pasien
         options: Options(
           headers: {
             'Authorization':

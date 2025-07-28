@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Import flutter_svg
 import 'package:pgcard/pages/main/navigation/profile/edit%20profile/profile_information_screen.dart';
 import 'package:pgcard/providers/patient_provider.dart';
 import 'package:pgcard/utils/bmi_checker.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -87,11 +89,13 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
                         Center(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 24),
-                            child: CircleAvatar(
-                              radius: 53,
-                              backgroundColor: Colors.grey,
-                              backgroundImage:
-                                  AssetImage('assets/images/profile.png'),
+                            child: ProfilePicture(
+                              name: patient
+                                  .fullName, // Menggunakan nama lengkap pasien
+                              radius: 53, // Ukuran radius
+                              fontsize: 40, // Ukuran font inisial
+                              // Warna latar belakang acak
+                              // Anda bisa menambahkan properti lain seperti backgroundColor, textColor, dll.
                             ),
                           ),
                         ),
@@ -108,12 +112,16 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
                         _buildProfileItem('Pendidikan', patient.education),
                         _buildProfileItem(
                             'Status Pernikahan', patient.maritalStatus),
-                        _buildProfileItem(
-                            'Tinggi Badan', '${patient.height} cm'),
-                        _buildProfileItem(
-                            'Berat Badan', '${patient.weight} kg'),
-                        _buildProfileItem('Index Masa Tubuh',
-                            bmiChecker(70, 172, patient.gender.toString()))
+                        //   _buildProfileItem(
+                        //       'Tinggi Badan', '${patient.height} cm'),
+                        //   _buildProfileItem(
+                        //       'Berat Badan', '${patient.weight} kg'),
+                        //   _buildProfileItem(
+                        //       'Index Masa Tubuh',
+                        //       bmiChecker(
+                        //           patient.weight,
+                        //           patient.height.toDouble(),
+                        //           patient.gender.toString()))
                       ],
                     ),
                   );

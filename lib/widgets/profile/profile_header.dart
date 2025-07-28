@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart'; // Import the package
 
 class ProfileHeader extends StatelessWidget {
   final String name;
@@ -14,15 +15,16 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
+        ProfilePicture(
+          // PERUBAHAN DI SINI
+          name: name, // Menggunakan nama yang diteruskan
           radius: 53,
-          backgroundImage:
-              AssetImage('assets/images/profile.png'), // Menggunakan PNG lokal
+          fontsize: 40,
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(
           name,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Colors.black,
@@ -30,7 +32,7 @@ class ProfileHeader extends StatelessWidget {
         ),
         Text(
           phoneNumber,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w400,
             color: Colors.black,

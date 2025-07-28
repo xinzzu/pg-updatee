@@ -44,7 +44,7 @@ import 'package:logger/logger.dart';
 
 class AuthService {
   final Dio _dio = Dio();
-  final String _baseUrl = 'http://10.4.52.201:8000/api/auth/login';
+  final String _baseUrl = 'http://10.0.2.2:8000/api/auth/login';
   final Logger _logger = Logger();
 
   Future<Map<String, dynamic>> login(String rm, String password) async {
@@ -104,10 +104,60 @@ class AuthService {
     _logger.i('Logout successful, token removed.');
   }
 
-  // Tambahkan metode ini untuk mengambil token
+  // Metode untuk mengambil token
   Future<String?> getAuthToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs
-        .getString('token'); // Mengembalikan token jika ada, null jika tidak
+    return prefs.getString('token');
+  }
+
+  // Metode baru untuk memvalidasi token
+  Future<bool> validateToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token == null) {
+      return false; // Tidak ada token, berarti tidak valid
+    }
+
+    try {
+      // Ganti dengan endpoint validasi token yang sebenarnya,
+      // atau endpoint ringan yang memerlukan otentikasi.
+      // Contoh: endpoint profil pengguna atau endpoint status.
+      // Jika endpoint ini mengembalikan 200 OK, token dianggap valid.
+      final response = await _dio.get(
+        'http://10.0.2.2:8000/api/patient', // Contoh: gunakan endpoint pasien
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      // Jika status code 200, token valid
+      if (response.statusCode == 200 &&
+          response.data['meta']['success'] == true) {
+        _logger.i('Token is valid.');
+        return true;
+      } else {
+        // Jika status code bukan 200 atau meta.success false, token tidak valid
+        _logger.w(
+            'Token validation failed: Status ${response.statusCode}, Message: ${response.data['meta']['message']}');
+        await logout(); // Hapus token yang tidak valid
+        return false;
+      }
+    } on DioException catch (e) {
+      // Tangani error jaringan atau respons non-2xx
+      _logger.e('Token validation DioError: ${e.message}');
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        // Jika 401 Unauthorized atau 403 Forbidden, token tidak valid
+        _logger.w('Token is unauthorized or forbidden. Logging out.');
+        await logout(); // Hapus token yang tidak valid
+      }
+      return false;
+    } catch (e) {
+      _logger.e('Unexpected error during token validation: $e');
+      return false;
+    }
   }
 }

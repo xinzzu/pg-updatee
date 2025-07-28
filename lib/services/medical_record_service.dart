@@ -1,0 +1,54 @@
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
+import 'package:pgcard/models/medical_record/medical_record_model.dart'; // Import model yang baru
+
+class MedicalRecordService {
+  final Dio _dio = Dio();
+  final Logger _logger = Logger();
+
+  // Ganti URL ini dengan endpoint medical record Anda
+  final String _baseUrl =
+      'http://10.0.2.2:8000/api/medical-record'; // Contoh URL
+
+  Future<MedicalRecord?> getMedicalRecord() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        _logger.e('No token found for medical record.');
+        return null;
+      }
+
+      final response = await _dio.get(
+        _baseUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final success = response.data['meta']['success'];
+        if (success) {
+          _logger.i('Medical record data retrieved successfully');
+          return MedicalRecord.fromJson(response.data['data']);
+        } else {
+          _logger.e(
+              'Failed to retrieve medical record data: ${response.data['meta']['message']}');
+          return null;
+        }
+      } else {
+        _logger.e(
+            'Unexpected status code for medical record: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      _logger.e('Error during fetching medical record data: $e');
+      return null;
+    }
+  }
+}

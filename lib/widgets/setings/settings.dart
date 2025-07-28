@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 class SettingsHeader extends StatelessWidget {
   final String name;
@@ -14,10 +15,10 @@ class SettingsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
+        ProfilePicture(
+          name: name,
           radius: 53,
-          backgroundImage:
-              AssetImage('assets/images/profile.png'), // Menggunakan PNG lokal
+          fontsize: 40,
         ),
         SizedBox(height: 5),
         Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pgcard/utils/responsive.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart'; // Import the package
 
 class CustomHeader extends StatelessWidget {
   final String userName;
@@ -44,12 +45,15 @@ class CustomHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: responsive.wp(7),
-                    backgroundImage: profileImageUrl != null
-                        ? NetworkImage(profileImageUrl!)
-                        : AssetImage('assets/images/profile.png')
-                            as ImageProvider,
+                  // PERUBAHAN DI SINI: Mengganti CircleAvatar dengan ProfilePicture
+                  ProfilePicture(
+                    name:
+                        userName, // Menggunakan userName sebagai sumber inisial
+                    radius: responsive.wp(
+                        7), // Sesuaikan radius aFgar mirip dengan CircleAvatar sebelumnya
+                    fontsize: responsive.wp(5), // Sesuaikan ukuran font inisial
+                    // Untuk warna latar belakang acak
+                    // Anda bisa menambahkan properti lain seperti backgroundColor, textColor, dll.
                   ),
                   SizedBox(width: responsive.wp(4)),
                   Expanded(
@@ -75,11 +79,6 @@ class CustomHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(Icons.notifications_none, color: Colors.white),
-                  //   iconSize: responsive.wp(6),
-                  //   onPressed: () {},
-                  // ),
                 ],
               ),
             ),
