@@ -44,7 +44,7 @@ import 'package:logger/logger.dart';
 
 class AuthService {
   final Dio _dio = Dio();
-  final String _baseUrl = 'http://10.0.2.2:8000/api/auth/login';
+  final String _baseUrl = 'http://10.4.52.201:8000/api/auth/login';
   final Logger _logger = Logger();
 
   Future<Map<String, dynamic>> login(String rm, String password) async {
@@ -125,7 +125,7 @@ class AuthService {
       // Contoh: endpoint profil pengguna atau endpoint status.
       // Jika endpoint ini mengembalikan 200 OK, token dianggap valid.
       final response = await _dio.get(
-        'http://10.0.2.2:8000/api/patient', // Contoh: gunakan endpoint pasien
+        'http://10.4.52.201:8000/api/patient', // Contoh: gunakan endpoint pasien
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

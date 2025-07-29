@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:pgcard/pages/main/navigation/setings/favorite/favorite.dart';
-import 'package:pgcard/pages/main/navigation/setings/help%20center/help_center.dart';
-import 'package:pgcard/pages/main/navigation/setings/history.dart/history.dart';
 import 'package:pgcard/pages/main/navigation/setings/terms%20and%20condition/terms.dart';
 import 'package:pgcard/widgets/setings/settings.dart';
 import 'package:pgcard/widgets/setings/settings_menu_item.dart';
@@ -10,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pgcard/utils/show_logout_dialog.dart'; // Impor dialog logout
 import 'package:provider/provider.dart'; // Import for provider
 import 'package:pgcard/providers/patient_provider.dart'; // Import your patient provider
-
 class SettingScreen extends StatelessWidget {
   const SettingScreen({Key? key}) : super(key: key);
 
@@ -38,7 +34,6 @@ class SettingScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 // Use Consumer to access patient data from the provider
                 Consumer<PatientProvider>(
                   builder: (context, patientProvider, child) {
@@ -66,20 +61,6 @@ class SettingScreen extends StatelessWidget {
                     }
                   },
                 ),
-
-                // const SizedBox(height: 42),
-                // SettingMenuItem(
-                //   iconPath: 'assets/icons/profile/history.svg',
-                //   title: 'Riwayat',
-                //   onTap: () {
-                //     // Handle Favorit tap
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => const HistoryScreen()),
-                //     );
-                //   },
-                // ),
                 SettingMenuItem(
                   iconPath: 'assets/icons/profile/favorite.svg',
                   title: 'Favorit',
@@ -92,18 +73,6 @@ class SettingScreen extends StatelessWidget {
                     );
                   },
                 ),
-                // SettingMenuItem(
-                //   iconPath: 'assets/icons/profile/help.svg',
-                //   title: 'Pusat Bantuan',
-                //   onTap: () {
-                //     // Handle Favorit tap
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => const HelpCenterScreen()),
-                //     );
-                //   },
-                // ),
                 SettingMenuItem(
                   iconPath: 'assets/icons/profile/terms.svg',
                   title: 'Syarat dan Ketentuan',

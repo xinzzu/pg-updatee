@@ -9,7 +9,7 @@ import 'package:pgcard/providers/medical_record_provider.dart'; // Import Medica
 import 'package:pgcard/models/medical_record/medical_record_model.dart'; // Import MedicalRecord model
 
 // Import widget custom Anda
-import 'package:pgcard/widgets/patient/header_section.dart'; // Ini mungkin tidak lagi digunakan untuk QR code
+import 'package:pgcard/widgets/patient/header_section.dart'; // Ini mungkin tidak lagi digunakan untuk QR cX  ode
 import 'package:pgcard/widgets/patient/patient_info_card.dart';
 import 'package:pgcard/widgets/patient/treatment_history_card.dart';
 
@@ -68,7 +68,6 @@ Gen IRS1 RS1801278: ${medicalRecord.irs1Rs1801278 ?? 'Tidak tersedia'}
         ),
       ),
       body: Consumer<MedicalRecordProvider>(
-        // Gunakan Consumer untuk MedicalRecordProvider
         builder: (context, medicalRecordProvider, child) {
           if (medicalRecordProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -76,12 +75,15 @@ Gen IRS1 RS1801278: ${medicalRecord.irs1Rs1801278 ?? 'Tidak tersedia'}
             final medicalRecord = medicalRecordProvider.medicalRecord!;
             final qrDataString = _generateQrData(medicalRecord);
 
-            return SingleChildScrollView(
+            return Center(
+              // Memastikan seluruh konten rata tengah horizontal
               child: Container(
                 color: Colors.white,
                 constraints: const BoxConstraints(maxWidth: 480),
                 padding: const EdgeInsets.all(28.0),
+                // PERUBAHAN DI SINI: Menghapus SingleChildScrollView
                 child: Column(
+                  // Langsung menggunakan Column sebagai child dari Container
                   children: [
                     const SizedBox(height: 4),
                     Center(
@@ -103,34 +105,40 @@ Gen IRS1 RS1801278: ${medicalRecord.irs1Rs1801278 ?? 'Tidak tersedia'}
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Column(
-                        children: [
-                          // Ambil data pasien terpisah untuk PatientInfoCard
-                          Consumer<PatientProvider>(
-                            builder: (context, patientProvider, patientChild) {
-                              if (patientProvider.isLoading) {
-                                return const CircularProgressIndicator();
-                              } else if (patientProvider.patient != null) {
-                                final patient = patientProvider.patient!;
-                                return PatientInfoCard(
-                                    patient: patient,
-                                    medicalRecord:
-                                        medicalRecord); // Meneruskan kedua objek
-                              } else {
-                                return const Text(
-                                    'Data pasien tidak tersedia.');
-                              }
-                            },
+                    // PERUBAHAN DI SINI: Menghapus Padding(28.0) di sekitar Column kartu
+                    // Karena Container induk sudah memiliki padding 28.0
+                    Column(
+                      // Inner Column for cards
+                      children: [
+                        Consumer<PatientProvider>(
+                          builder: (context, patientProvider, patientChild) {
+                            if (patientProvider.isLoading) {
+                              return const CircularProgressIndicator();
+                            } else if (patientProvider.patient != null) {
+                              final patient = patientProvider.patient!;
+                              return Center(
+                                child: SizedBox(
+                                  width: 350,
+                                  child: PatientInfoCard(
+                                      patient: patient,
+                                      medicalRecord: medicalRecord),
+                                ),
+                              );
+                            } else {
+                              return const Text('Data pasien tidak tersedia.');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: SizedBox(
+                            width: 350,
+                            child:
+                                TreatmentHistory(medicalRecord: medicalRecord),
                           ),
-                          const SizedBox(height: 20),
-                          TreatmentHistory(
-                              medicalRecord:
-                                  medicalRecord), // Meneruskan objek MedicalRecord
-                          const SizedBox(height: 20),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
                   ],
                 ),

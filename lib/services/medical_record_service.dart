@@ -9,7 +9,7 @@ class MedicalRecordService {
 
   // Ganti URL ini dengan endpoint medical record Anda
   final String _baseUrl =
-      'http://10.0.2.2:8000/api/medical-record'; // Contoh URL
+      'http://10.4.52.201:8000/api/medical-record'; // Contoh URL
 
   Future<MedicalRecord?> getMedicalRecord() async {
     try {
