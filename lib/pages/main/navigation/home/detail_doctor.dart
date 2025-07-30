@@ -6,13 +6,11 @@ import 'package:pgcard/widgets/doctor/appoitment_header.dart';
 import 'package:pgcard/widgets/doctor/button_favorite.dart';
 import 'package:pgcard/widgets/doctor/doctor_profile_card.dart';
 import 'package:pgcard/widgets/doctor/experience.dart';
-import 'package:pgcard/widgets/doctor/voice_call_button.dart';
 
 class AppointmentDetailScreen extends StatelessWidget {
   final Doctor doctor;
 
-  const AppointmentDetailScreen({Key? key, required this.doctor})
-      : super(key: key);
+  const AppointmentDetailScreen({super.key, required this.doctor});
 
   @override
   Widget build(BuildContext context) {

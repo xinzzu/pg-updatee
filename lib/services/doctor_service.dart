@@ -18,7 +18,7 @@ class DoctorService {
       }
 
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/doctors', // Ganti sesuai environment (10.0.2.2 utk emulator)
+        'http://10.4.52.201:8000/api/doctors',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

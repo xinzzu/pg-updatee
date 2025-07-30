@@ -1,13 +1,12 @@
 class MedicalRecord {
   final String patientName;
-  final String
-      patientData; // Ini mungkin perlu di-parse lebih lanjut jika isinya kompleks
+  final String patientData;
   final List<String> drugAllergies;
   final String? prescription;
   final int height;
   final int weight;
   final String bmi;
-  final String? irs1Rs1801278; // Sesuaikan nama field jika berbeda di backend
+  final String? irs1Rs1801278;
   final List<String> drugsConsumed;
   final String? diabetesDiagnosedSince;
 

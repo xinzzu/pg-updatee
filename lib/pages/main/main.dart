@@ -6,16 +6,15 @@ import 'package:pgcard/pages/main/navigation/profile/profile.dart';
 import 'package:pgcard/pages/main/navigation/setings/settings.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0; // Menyimpan indeks halaman yang dipilih
+  int _selectedIndex = 0;
 
-  // Daftar halaman yang akan ditampilkan
   final List<Widget> _pages = [
     const HomeScreen(),
     const PatientCardScreen(),
@@ -23,7 +22,6 @@ class _MainScreenState extends State<MainScreen> {
     const SettingScreen(),
   ];
 
-  // Fungsi untuk mengganti halaman berdasarkan ikon yang ditekan
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -34,16 +32,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // Menggunakan IndexedStack agar halaman tidak dimuat ulang setiap kali berpindah
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Memilih halaman berdasarkan indeks
+        onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
@@ -75,8 +71,8 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Pengaturan',
           ),
         ],
-        selectedItemColor: Color(0xFF4C4DDC), // Warna ikon yang dipilih (ungu)
-        unselectedItemColor: Colors.black, // Warna ikon default
+        selectedItemColor: Color(0xFF4C4DDC),
+        unselectedItemColor: Colors.black,
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Import flutter_svg
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pgcard/pages/main/navigation/profile/edit%20profile/profile_information_screen.dart';
 import 'package:pgcard/providers/patient_provider.dart';
 import 'package:pgcard/utils/bmi_checker.dart';
@@ -17,13 +17,12 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch patient data on screen load
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PatientProvider>(context, listen: false).fetchPatientData();
     });
   }
 
-  // Fungsi helper untuk menerjemahkan status pernikahan
   String _translateMaritalStatus(String status) {
     debugPrint('Translating marital status: $status');
     switch (status.toLowerCase()) {
@@ -34,11 +33,10 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
       case 'divorced':
         return 'Cerai';
       default:
-        return status; // Kembalikan nilai asli jika tidak ada terjemahan
+        return status;
     }
   }
 
-  // Fungsi helper untuk menerjemahkan jenis kelamin
   String _translateGender(String gender) {
     debugPrint('Translating gender: $gender');
     switch (gender.toLowerCase()) {
@@ -47,7 +45,7 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
       case 'female':
         return 'Perempuan';
       default:
-        return gender; // Kembalikan nilai asli jika tidak ada terjemahan
+        return gender;
     }
   }
 
@@ -57,9 +55,7 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
-          // Center the entire scrollable content
           child: SingleChildScrollView(
-            // Allows content to scroll if it overflows
             child: Consumer<PatientProvider>(
               builder: (context, patientProvider, child) {
                 final patient = patientProvider.patient;
@@ -72,15 +68,12 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
                   return Container(
                     constraints: const BoxConstraints(maxWidth: 480),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
-                        vertical: 22), // Sesuaikan padding agar konsisten
+                        horizontal: 28, vertical: 22),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Header dengan Stack untuk membuat teks di tengah
                         Stack(
                           children: [
-                            // Teks "Informasi Profil" di tengah
                             const Center(
                               child: Text(
                                 'Informasi Profil',
@@ -92,42 +85,32 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            // Ikon edit di posisi kanan
                           ],
                         ),
                         const SizedBox(height: 24),
-
-                        // Profile Image
                         Center(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 24),
                             child: ProfilePicture(
-                              name: patient
-                                  .fullName, // Menggunakan nama lengkap pasien
-                              radius: 53, // Ukuran radius
-                              fontsize: 40, // Ukuran font inisial
-                              random: true, // Warna latar belakang acak
+                              name: patient.fullName,
+                              radius: 53,
+                              fontsize: 40,
+                              random: true,
                             ),
                           ),
                         ),
-
-                        // Profile Details in Text form
                         _buildProfileItem('Nama', patient.fullName),
                         _buildProfileItem('NIK', patient.nationalId),
                         _buildProfileItem('Tanggal Lahir', patient.dateOfBirth),
                         _buildProfileItem(
-                            'Jenis Kelamin',
-                            _translateGender(
-                                patient.gender)), // PERUBAHAN DI SINI
+                            'Jenis Kelamin', _translateGender(patient.gender)),
                         _buildProfileItem('Alamat', patient.address),
                         _buildProfileItem('Nomor Telepon', patient.phoneNumber),
                         _buildProfileItem('Agama', patient.religion),
                         _buildProfileItem('Pekerjaan', patient.occupation),
                         _buildProfileItem('Pendidikan', patient.education),
-                        _buildProfileItem(
-                            'Status Pernikahan',
-                            _translateMaritalStatus(
-                                patient.maritalStatus)), // PERUBAHAN DI SINI
+                        _buildProfileItem('Status Pernikahan',
+                            _translateMaritalStatus(patient.maritalStatus)),
                       ],
                     ),
                   );
@@ -144,7 +127,6 @@ class _ProfileInformationScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Widget helper untuk menampilkan item profil
   Widget _buildProfileItem(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),

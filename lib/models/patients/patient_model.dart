@@ -11,8 +11,6 @@ class Patient {
   final String occupation;
   final String education;
   final String maritalStatus;
-  final DateTime createdAt;
-  final DateTime updatedAt;
   final String? birthPlace;
   final String diabetesDiagnosedSince;
 
@@ -29,13 +27,10 @@ class Patient {
     required this.occupation,
     required this.education,
     required this.maritalStatus,
-    required this.createdAt,
-    required this.updatedAt,
     required this.birthPlace,
     required this.diabetesDiagnosedSince,
   });
 
-  // Factory untuk mengubah JSON menjadi instance Patient
   factory Patient.fromJson(Map<String, dynamic> json) {
     return Patient(
       patientId: json['patient_id'],
@@ -50,8 +45,6 @@ class Patient {
       occupation: json['occupation'],
       education: json['education'],
       maritalStatus: json['marital_status'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
       birthPlace: json['birth_place'] ?? '-',
       diabetesDiagnosedSince: json['diabetes_diagnosed_since'] ?? '-',
     );

@@ -18,11 +18,10 @@ class PatientService {
       }
 
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/patient', // Ganti URL dengan endpoint pasien
+        'http://10.4.52.201:8000/api/patient',
         options: Options(
           headers: {
-            'Authorization':
-                'Bearer $token', // Gunakan token dari SharedPreferences
+            'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
@@ -30,13 +29,12 @@ class PatientService {
 
       if (response.statusCode == 200) {
         _logger.i('Patient data retrieved successfully');
-        return Patient.fromJson(response.data['data']); // Parsing data pasien
+        return Patient.fromJson(response.data['data']);
       } else {
         _logger.e('Failed to retrieve patient data: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      // Menangani kesalahan yang terjadi selama pemanggilan API
       _logger.e('Error during fetching patient data: $e');
       return null;
     }

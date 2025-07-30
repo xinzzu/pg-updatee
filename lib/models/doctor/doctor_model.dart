@@ -4,7 +4,7 @@ class Doctor {
   final String specialization;
   final String strId;
   final String practiceLocation;
-  final String image; // tambahkan field gambar dummy
+  final String image;
   final double rating;
   final int reviews;
 
@@ -26,9 +26,9 @@ class Doctor {
       specialization: json['specialization'],
       strId: json['str_id'],
       practiceLocation: json['practice_location'],
-      image: json['image'] ?? 'assets/images/drg_rahma.png', // placeholder
-      rating: (json['rating'] ?? 4.5).toDouble(), //ganti kalau udah ga dummy
-      reviews: (json['review'] ?? 120), //ganti kalau udah ga dummy
+      image: json['image'],
+      rating: (json['rating']).toDouble(),
+      reviews: (json['review']),
     );
   }
 }

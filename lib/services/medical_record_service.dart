@@ -1,15 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
-import 'package:pgcard/models/medical_record/medical_record_model.dart'; // Import model yang baru
+import 'package:pgcard/models/medical_record/medical_record_model.dart';
 
 class MedicalRecordService {
   final Dio _dio = Dio();
   final Logger _logger = Logger();
 
-  // Ganti URL ini dengan endpoint medical record Anda
-  final String _baseUrl =
-      'http://10.4.52.201:8000/api/medical-record'; // Contoh URL
+  final String _baseUrl = 'http://10.4.52.201:8000/api/medical-record';
 
   Future<MedicalRecord?> getMedicalRecord() async {
     try {

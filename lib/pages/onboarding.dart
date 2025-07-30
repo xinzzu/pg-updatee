@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:pgcard/widgets/onboarding/section_three.dart';
 import 'package:pgcard/widgets/onboarding/section_two.dart';
-// import 'package:provider/provider.dart';
-import '../utils/responsive.dart'; // Import kelas Responsive
+import '../utils/responsive.dart';
 
 class Onboarding extends StatelessWidget {
+  const Onboarding({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context); // Inisialisasi Responsive
+    final responsive = Responsive(context);
 
     return Scaffold(
       body: Stack(
         children: [
-          // Layer 1: Warna latar belakang biru
           Container(
-            color: Color(0xFF4C4DDC), // Warna latar belakang
+            color: Color(0xFF4C4DDC),
           ),
-          // Layer 2: Texture PNG di atas warna biru
           Positioned.fill(
             child: Opacity(
-              opacity: 0.7, // Atur opacity sesuai kebutuhan
+              opacity: 0.7,
               child: Image.asset(
-                'assets/images/texture.png', // Path ke texture PNG
-                fit: BoxFit.cover, // Menutup seluruh layar
+                'assets/images/texture.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          // Layer 3: Gambar Dokter
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/doctor.png'), // Gambar dokter
+                image: AssetImage('assets/images/doctor.png'),
                 fit: BoxFit.contain,
                 alignment: Alignment.center,
               ),
@@ -38,15 +36,13 @@ class Onboarding extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding:
-                      EdgeInsets.only(top: responsive.hp(2)), // Padding dinamis
+                  padding: EdgeInsets.only(top: responsive.hp(2)),
                 ),
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(
-                        top: responsive.hp(60)), // Margin dinamis
+                    margin: EdgeInsets.only(top: responsive.hp(60)),
                     decoration: BoxDecoration(
-                      color: Colors.white, // Warna rectangle putih
+                      color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(24),
                       ),
@@ -55,12 +51,12 @@ class Onboarding extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                         vertical: responsive.hp(3),
                         horizontal: responsive.wp(6),
-                      ), // Padding dinamis berdasarkan ukuran layar
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SectionTwo(), //text
-                          SectionThree(), // Tombol "Get Started" ada di sini
+                          SectionTwo(),
+                          SectionThree(),
                         ],
                       ),
                     ),

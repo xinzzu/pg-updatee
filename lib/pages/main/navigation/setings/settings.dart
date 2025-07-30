@@ -4,11 +4,12 @@ import 'package:pgcard/pages/main/navigation/setings/terms%20and%20condition/ter
 import 'package:pgcard/widgets/setings/settings.dart';
 import 'package:pgcard/widgets/setings/settings_menu_item.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pgcard/utils/show_logout_dialog.dart'; // Impor dialog logout
-import 'package:provider/provider.dart'; // Import for provider
-import 'package:pgcard/providers/patient_provider.dart'; // Import your patient provider
+import 'package:pgcard/utils/show_logout_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:pgcard/providers/patient_provider.dart';
+
 class SettingScreen extends StatelessWidget {
-  const SettingScreen({Key? key}) : super(key: key);
+  const SettingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +35,22 @@ class SettingScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Use Consumer to access patient data from the provider
                 Consumer<PatientProvider>(
                   builder: (context, patientProvider, child) {
                     final patient = patientProvider.patient;
 
                     if (patientProvider.isLoading) {
-                      return const CircularProgressIndicator(); // Show loading state
+                      return const CircularProgressIndicator();
                     }
 
                     if (patient != null) {
                       return SettingsHeader(
-                        name:
-                            patient.fullName, // Dynamically show the full name
-                        phoneNumber: patient
-                            .phoneNumber, // Dynamically show the phone number
+                        name: patient.fullName,
+                        phoneNumber: patient.phoneNumber,
                       );
                     } else {
                       return const Text(
-                        'Data pasien tidak tersedia', // Fallback when patient data is null
+                        'Data pasien tidak tersedia',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -65,7 +63,6 @@ class SettingScreen extends StatelessWidget {
                   iconPath: 'assets/icons/profile/favorite.svg',
                   title: 'Favorit',
                   onTap: () {
-                    // Handle Favorit tap
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -77,7 +74,6 @@ class SettingScreen extends StatelessWidget {
                   iconPath: 'assets/icons/profile/terms.svg',
                   title: 'Syarat dan Ketentuan',
                   onTap: () {
-                    // Handle Favorit tap
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -85,7 +81,6 @@ class SettingScreen extends StatelessWidget {
                     );
                   },
                 ),
-
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => showLogoutDialog(context),

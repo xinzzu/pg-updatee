@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:pgcard/providers/login_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -28,12 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
           .login(rm, password)
           .then((isSuccess) {
         if (isSuccess) {
-          // PERUBAHAN DI SINI: Gunakan pushAndRemoveUntil untuk membersihkan stack navigasi
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainScreen()),
-            (Route<dynamic> route) =>
-                false, // Ini akan menghapus semua rute sebelumnya
+            (Route<dynamic> route) => false,
           );
         }
       }).catchError((error) {
