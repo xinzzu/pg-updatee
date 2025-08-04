@@ -26,9 +26,9 @@ class Doctor {
       specialization: json['specialization'],
       strId: json['str_id'],
       practiceLocation: json['practice_location'],
-      image: json['image'],
-      rating: (json['rating']).toDouble(),
-      reviews: (json['review']),
+      image: json['image'] ?? 'assets/images/drg_rahma.png',
+      rating: (json['rating'] ?? 4.5).toDouble(), 
+      reviews: (json['review'] ?? 120),
     );
   }
 }

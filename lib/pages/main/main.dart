@@ -4,6 +4,7 @@ import 'package:pgcard/pages/main/navigation/home/home.dart';
 import 'package:pgcard/pages/main/navigation/appoitment/patient.dart';
 import 'package:pgcard/pages/main/navigation/profile/profile.dart';
 import 'package:pgcard/pages/main/navigation/setings/settings.dart';
+import 'package:pgcard/pages/main/doctor/scanqr.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     const PatientCardScreen(),
     const ProfileScreen(),
     const SettingScreen(),
+    // const ScanQrScreen(),
   ];
 
   void _onItemTapped(int index) {

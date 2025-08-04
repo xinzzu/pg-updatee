@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pgcard/pages/main/doctor/scanqr.dart';
 import 'package:pgcard/pages/main/navigation/home/detail_doctor.dart';
 import 'package:pgcard/pages/main/navigation/home/home.dart';
 import 'package:pgcard/pages/login/login.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const MainScreen(),
           '/onboarding': (context) => Onboarding(),
           '/patient_card': (context) => const PatientCardScreen(),
+          // '/scan_qr': (context) => const ScanQrScreen(),
         },
       ),
     );

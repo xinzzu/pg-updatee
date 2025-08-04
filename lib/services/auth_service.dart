@@ -74,7 +74,8 @@ class AuthService {
 
     try {
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/auth/login',
+        'http://10.4.52.201:8000/api/patient',
+        // 'http://10.4.52.201:8000/api/auth/login',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
