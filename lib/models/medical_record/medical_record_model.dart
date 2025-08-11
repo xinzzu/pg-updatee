@@ -9,6 +9,7 @@ class MedicalRecord {
   final String? irs1Rs1801278;
   final List<String> drugsConsumed;
   final String? diabetesDiagnosedSince;
+  final String? patientPgLink;
 
   MedicalRecord({
     required this.patientName,
@@ -21,6 +22,7 @@ class MedicalRecord {
     this.irs1Rs1801278,
     required this.drugsConsumed,
     this.diabetesDiagnosedSince,
+    this.patientPgLink,
   });
 
   factory MedicalRecord.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class MedicalRecord {
       irs1Rs1801278: json['irs1_rs1801278'],
       drugsConsumed: List<String>.from(json['drugs_consumed'] ?? []),
       diabetesDiagnosedSince: json['diabetes_diagnosed_since'],
+      patientPgLink: json['patient_pg_link'],
     );
   }
 }

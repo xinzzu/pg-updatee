@@ -9,8 +9,9 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String rm, String password) async {
     try {
+      print('Payload: $rm, $password');
       final response = await _dio.post(
-        _baseUrl,
+        'http://10.4.52.201:8000/api/auth/login',
         data: {
           'medical_record_number': rm,
           'password': password,
@@ -21,6 +22,8 @@ class AuthService {
           },
         ),
       );
+
+      print('Response: ${response.data}');
 
       if (response.statusCode == 200) {
         final success = response.data['meta']['success'];

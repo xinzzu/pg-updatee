@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pgcard/pages/main/doctor/scanqr.dart';
 import 'package:pgcard/pages/main/main.dart';
 import 'package:pgcard/widgets/login/button.dart';
 import 'package:pgcard/widgets/login/text_field.dart';
@@ -24,6 +25,18 @@ class _LoginScreenState extends State<LoginScreen> {
       String rm = _rmController.text.trim();
       String password = _passwordController.text.trim();
 
+      // Check for hardcoded doctor credentials
+      if (rm == "10000" && password == "12345678") {
+        // Doctor login - redirect to ScanQrScreen
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const ScanQrScreen()),
+          (Route<dynamic> route) => false,
+        );
+        return;
+      }
+
+      // Regular patient login flow
       Provider.of<LoginProvider>(context, listen: false)
           .login(rm, password)
           .then((isSuccess) {

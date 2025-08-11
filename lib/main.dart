@@ -30,6 +30,17 @@ void main() async {
     initialRoute = '/onboarding'; // Jika token tidak valid, ke onboarding/login
   }
   runApp(MyApp(initialRoute: initialRoute));
+  // WidgetsFlutterBinding.ensureInitialized();
+
+  // Komentar sementara untuk melewati validasi token
+  // AuthService authService = AuthService();
+  // bool isAuthenticated = await authService.validateToken();
+
+  // String initialRoute;
+  // // Langsung arahkan ke halaman ScanQrScreen
+  // initialRoute = '/scan_qr';
+
+  // runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
@@ -61,7 +72,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const MainScreen(),
           '/onboarding': (context) => Onboarding(),
           '/patient_card': (context) => const PatientCardScreen(),
-          // '/scan_qr': (context) => const ScanQrScreen(),
+          '/scan_qr': (context) => const ScanQrScreen(),
         },
       ),
     );

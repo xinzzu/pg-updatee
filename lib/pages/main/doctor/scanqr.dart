@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pgcard/utils/responsive.dart';
-import 'package:image_picker/image_picker.dart'; // Pastikan sudah ada di pubspec.yaml
+import 'package:image_picker/image_picker.dart';
+import 'package:pgcard/services/auth_service.dart';
+import 'package:pgcard/pages/onboarding.dart';
+import 'package:pgcard/pages/login/login.dart';
+import 'package:url_launcher/url_launcher.dart'; // Tambahkan import ini
+import 'package:permission_handler/permission_handler.dart';
 
 class ScanQrScreen extends StatefulWidget {
   const ScanQrScreen({Key? key}) : super(key: key);
@@ -10,45 +15,98 @@ class ScanQrScreen extends StatefulWidget {
   State<ScanQrScreen> createState() => _ScanQrScreenState();
 }
 
-class _ScanQrScreenState extends State<ScanQrScreen> {
+class _ScanQrScreenState extends State<ScanQrScreen>
+    with WidgetsBindingObserver {
   final MobileScannerController scannerController = MobileScannerController();
-  bool _showScanner = false; // State untuk mengontrol visibilitas scanner
+  bool _showScanner = false;
+  bool _isProcessing = false; // Tambahkan flag ini
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     scannerController.dispose();
     super.dispose();
   }
 
-  void _handleQrScanResult(String qrData) {
-    scannerController.stop(); // Hentikan pemindaian setelah hasil didapat
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (_showScanner && mounted) {
+        scannerController.start();
+      }
+    } else if (state == AppLifecycleState.paused) {
+      scannerController.stop();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
-    // Di sini Anda bisa mengolah data dari QR Code
-    print('QR Code berhasil discan: $qrData');
+  void _handleQrScanResult(String qrData) async {
+    if (_isProcessing) return;
+    setState(() {
+      _isProcessing = true;
+      _showScanner = false; // scanner hilang, tampilan kembali ke awal
+    });
+    await scannerController.stop();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Data Pasien Ditemukan'),
-          content: Text('Isi QR Code: $qrData'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Tutup'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Setelah menutup dialog, reset tampilan ke tombol awal
-                setState(() {
-                  _showScanner = false; // Sembunyikan scanner
-                });
-                // Tidak perlu memanggil scannerController.start() di sini
-                // karena kita akan menyembunyikan area scanner
-              },
-            ),
-          ],
-        );
-      },
-    );
+    // Tampilkan popup
+    final uri = Uri.tryParse(qrData);
+    if (uri != null && (uri.isScheme('http') || uri.isScheme('https'))) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text('Buka Link Pasien?'),
+            content: Text(qrData, style: const TextStyle(color: Colors.blue)),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Batal'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Kunjungi'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text('Data Pasien Ditemukan'),
+            content: Text('$qrData'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Tutup'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // Reset flag agar bisa scan lagi jika user menekan tombol scan
+    _isProcessing = false;
   }
 
   void _scanFromGallery() async {
@@ -56,8 +114,6 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      // Implementasi untuk memproses gambar dari galeri
-      // Package mobile_scanner memiliki fitur analyzeImage
       final BarcodeCapture? barcodeCapture =
           await scannerController.analyzeImage(image.path);
       if (barcodeCapture != null && barcodeCapture.barcodes.isNotEmpty) {
@@ -66,17 +122,43 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
           _handleQrScanResult(barcode.rawValue!);
         }
       } else {
-        // Jika tidak ada QR Code terdeteksi di gambar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Tidak ada QR Code ditemukan di gambar.')),
         );
       }
     }
-    // Setelah mencoba scan dari galeri, reset tampilan ke tombol awal
     setState(() {
-      _showScanner = false; // Sembunyikan scanner
+      _showScanner = false;
     });
+  }
+
+  void _logout() async {
+    final authService = AuthService();
+    await authService.logout();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  void _goToRiwayat() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RiwayatScreen()),
+    );
+  }
+
+  Future<void> _startScanner() async {
+    var status = await Permission.camera.request();
+    if (status.isGranted) {
+      scannerController.start();
+      setState(() {
+        _showScanner = true;
+      });
+    } else {
+      // Tampilkan pesan error
+    }
   }
 
   @override
@@ -84,33 +166,107 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
     final responsive = Responsive(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color(0xFF4C4DDC),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: Color(0xFF4C4DDC),
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'dr. Andini',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading:
+                  Icon(Icons.history_edu, color: Color(0xFF4C4DDC), size: 28),
+              title: Text(
+                'Riwayat',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _goToRiwayat();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout_rounded, color: Colors.red, size: 28),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.red),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _logout();
+              },
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                'PGCard v1.0',
+                style: TextStyle(color: Colors.grey[500], fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu, color: Colors.black),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
+        title: const Text(
+          'Selamat Datang, dr. Andini!',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: Stack(
         children: [
-          // Bagian UI latar belakang (Header, Ilustrasi, Teks Instruksi)
           Container(
             padding: EdgeInsets.fromLTRB(
-                responsive.wp(6), responsive.hp(8), responsive.wp(6), 0),
+                responsive.wp(6), responsive.hp(2), responsive.wp(6), 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Selamat Datang!',
-                      style: TextStyle(
-                        fontSize: responsive.wp(5.5),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.grey,
-                    ),
-                  ],
-                ),
-                SizedBox(height: responsive.hp(2)),
                 Text(
                   'Akses data pasien dengan scan QR',
                   style: TextStyle(
@@ -131,7 +287,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                 Expanded(
                   child: Center(
                     child: Image.asset(
-                      'assets/images/dr_yeny.png',
+                      'assets/images/icons_medical.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -139,72 +295,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
               ],
             ),
           ),
-
-          // Bagian Tombol Aksi Utama (Scan Langsung / Pilih dari Galeri)
-          // Ini akan muncul di bagian bawah jika _showScanner adalah false
-          if (!_showScanner)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.all(responsive.wp(6)),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _showScanner = true; // Tampilkan scanner
-                        });
-                        scannerController.start(); // Mulai kamera
-                      },
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      label: const Text('Scan QR Langsung',
-                          style: TextStyle(color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4C4DDC),
-                        padding: EdgeInsets.symmetric(
-                            vertical: responsive.hp(2),
-                            horizontal: responsive.wp(8)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-                    ElevatedButton.icon(
-                      onPressed: _scanFromGallery,
-                      icon: const Icon(Icons.photo, color: Colors.black),
-                      label: const Text('Pilih dari Galeri',
-                          style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.grey[200], // Warna abu-abu terang
-                        padding: EdgeInsets.symmetric(
-                            vertical: responsive.hp(2),
-                            horizontal: responsive.wp(8)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          // Bagian QR Scanner dan Tombol Reset (hanya muncul jika _showScanner adalah true)
+          // Tampilkan scanner hanya jika _showScanner == true
           if (_showScanner)
             Positioned(
               bottom: 0,
@@ -234,6 +325,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                       child: MobileScanner(
                         controller: scannerController,
                         onDetect: (barcodeCapture) {
+                          if (_isProcessing) return; // Cegah callback berulang
                           final barcode = barcodeCapture.barcodes.first;
                           if (barcode.rawValue != null) {
                             _handleQrScanResult(barcode.rawValue!);
@@ -242,16 +334,16 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                       ),
                     ),
                     SizedBox(height: responsive.hp(2)),
+                    // Tombol kembali di scanner
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Kembali ke tampilan awal (tombol Scan Langsung/Galeri)
+                        scannerController.stop();
                         setState(() {
                           _showScanner = false;
                         });
-                        scannerController.stop(); // Hentikan kamera
                       },
                       icon: const Icon(Icons.close, color: Colors.white),
-                      label: const Text('Batalkan',
+                      label: const Text('Kembali',
                           style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -263,8 +355,97 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                   ],
                 ),
               ),
+            )
+          else
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.all(responsive.wp(6)),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Tombol untuk mulai scan QR
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _isProcessing =
+                              false; // Reset flag setiap mulai scan baru
+                          _showScanner = true;
+                        });
+                        // Tunggu satu frame agar MobileScanner sudah muncul di widget tree
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted && _showScanner) {
+                            scannerController.start();
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.camera_alt, color: Colors.white),
+                      label: const Text('Scan QR Langsung',
+                          style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4C4DDC),
+                        padding: EdgeInsets.symmetric(
+                          vertical: responsive.hp(2),
+                          horizontal: responsive.wp(8),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+                    ElevatedButton.icon(
+                      onPressed: _scanFromGallery,
+                      icon: const Icon(Icons.photo, color: Colors.black),
+                      label: const Text('Pilih dari Galeri',
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[200],
+                        padding: EdgeInsets.symmetric(
+                          vertical: responsive.hp(2),
+                          horizontal: responsive.wp(8),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+// Halaman Riwayat Kosong
+class RiwayatScreen extends StatelessWidget {
+  const RiwayatScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riwayat'),
+        backgroundColor: const Color(0xFF4C4DDC),
+        foregroundColor: Colors.white,
+      ),
+      body: const Center(
+        child: Text('Belum ada riwayat tersedia.'),
       ),
     );
   }
