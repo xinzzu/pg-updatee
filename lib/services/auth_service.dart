@@ -4,14 +4,15 @@ import 'package:logger/logger.dart';
 
 class AuthService {
   final Dio _dio = Dio();
-  final String _baseUrl = 'http://10.4.52.201:8000/api/auth/login';
+  final String _baseUrl =
+      'https://web-production-433dd.up.railway.app/api/auth/login';
   final Logger _logger = Logger();
 
   Future<Map<String, dynamic>> login(String rm, String password) async {
     try {
       print('Payload: $rm, $password');
       final response = await _dio.post(
-        'http://10.4.52.201:8000/api/auth/login',
+        'https://web-production-433dd.up.railway.app/api/auth/login',
         data: {
           'medical_record_number': rm,
           'password': password,
@@ -77,8 +78,8 @@ class AuthService {
 
     try {
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/patient',
-        // 'http://10.4.52.201:8000/api/auth/login',
+        'https://web-production-433dd.up.railway.app/api/patient',
+        // 'https://web-production-433dd.up.railway.app/api/auth/login',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

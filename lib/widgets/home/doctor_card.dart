@@ -34,75 +34,51 @@ class DoctorCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                doctor.image,
-                width: 92,
-                height: 92,
-                fit: BoxFit.cover,
+            // Doctor Image
+            Container(
+              width: 92, // responsive.wp(15),
+              height: 92, // responsive.wp(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: AssetImage(doctor.image),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 16),
+
+            // Doctor Info (Expanded untuk menggunakan space yang tersedia)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        doctor.fullName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Consumer<DoctorProvider>(
-                        builder: (context, provider, _) {
-                          final isFav = provider.isFavorite(doctor);
-                          return IconButton(
-                            icon: Icon(
-                              isFav ? Icons.favorite : Icons.favorite_border,
-                              color: isFav ? Colors.red : Colors.black,
-                            ),
-                            onPressed: () {
-                              provider.toggleFavorite(doctor);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    isFav
-                                        ? 'Dihapus dari favorit'
-                                        : 'Ditambahkan ke favorit',
-                                  ),
-                                  duration: const Duration(seconds: 1),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                  Text(
+                    doctor.fullName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2, // Maksimal 2 baris
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Row(children: [
-                    const SizedBox(height: 4),
-                    Text(
-                      doctor.specialization,
-                      style: const TextStyle(
-                        color: Color(0xFF939393),
-                        fontSize: 12,
-                      ),
+                  const SizedBox(height: 4),
+                  Text(
+                    doctor.specialization,
+                    style: const TextStyle(
+                      color: Color(0xFF939393),
+                      fontSize: 12,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '| ${doctor.practiceLocation}',
-                      style: const TextStyle(
-                        color: Color(0xFF939393),
-                        fontSize: 12,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${doctor.practiceLocation}',
+                    style: const TextStyle(
+                      color: Color(0xFF939393),
+                      fontSize: 12,
                     ),
-                  ]),
-                  const SizedBox(height: 16),
+                  ),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(
@@ -110,7 +86,7 @@ class DoctorCard extends StatelessWidget {
                         color: Colors.amber,
                         size: 18,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       Text(
                         doctor.rating.toString(),
                         style: const TextStyle(
@@ -129,6 +105,12 @@ class DoctorCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+
+            // Favorite Button
+            IconButton(
+              onPressed: onFavoriteTap,
+              icon: const Icon(Icons.favorite_border),
             ),
           ],
         ),

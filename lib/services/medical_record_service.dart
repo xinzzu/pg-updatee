@@ -7,7 +7,8 @@ class MedicalRecordService {
   final Dio _dio = Dio();
   final Logger _logger = Logger();
 
-  final String _baseUrl = 'http://10.4.52.201:8000/api/medical-record';
+  final String _baseUrl =
+      'https://web-production-433dd.up.railway.app/api/medical-record';
 
   Future<MedicalRecord?> getMedicalRecord() async {
     try {

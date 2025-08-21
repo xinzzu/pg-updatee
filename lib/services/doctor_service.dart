@@ -18,7 +18,7 @@ class DoctorService {
       }
 
       final response = await _dio.get(
-        'http://10.4.52.201:8000/api/doctors',
+        'https://web-production-433dd.up.railway.app/api/doctors',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
